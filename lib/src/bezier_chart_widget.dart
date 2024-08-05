@@ -402,7 +402,7 @@ class BezierChartState extends State<BezierChart>
         return _xAxisDataPoints.length * (horizontalSpacing * _currentScale) -
             horizontalPadding / 2;
       } else if (scale == BezierChartScale.weeklyPeriod) {
-        horizontalSpacing = constraints.maxWidth / 12;
+        horizontalSpacing = constraints.maxWidth / 7;
         return _xAxisDataPoints.length * (horizontalSpacing * _currentScale) -
             horizontalPadding / 2;
       } else if (scale == BezierChartScale.monthly) {
@@ -1602,7 +1602,20 @@ class _BezierChartPainter extends CustomPainter {
       if (areEqualDates(date, now)) {
         return "Current\n";
       } else {
-        return "${dateFormat.format(_currentXDataPoint!.xAxis)}\n";
+        //week number of the year
+        var date = _currentXDataPoint!.xAxis as DateTime;
+
+        // ISO 8601 week date
+        // Find the nearest Thursday: needed to determine the first week
+        var thursday = date.subtract(Duration(days: (date.weekday + 5) % 7 - 3));
+
+        // January 4th is always in week 1
+        var firstThursday = DateTime(thursday.year, 1, 4);
+
+        // Week number is the number of weeks between the first Thursday and this Thursday
+        var weekNumber = ((thursday.difference(firstThursday).inDays / 7).ceil() + 1);
+
+        return weekNumber.toString();
       }
     }
     else if (scale == BezierChartScale.monthly) {
@@ -1645,8 +1658,19 @@ class _BezierChartPainter extends CustomPainter {
       return dateFormat.format(dataPoint.xAxis as DateTime);
     } else if (scale == BezierChartScale.weeklyPeriod) {
       //week number of the year
-      final dateFormat = intl.DateFormat('w');
-      return dateFormat.format(dataPoint.xAxis as DateTime);
+      var date = dataPoint.xAxis as DateTime;
+
+      // ISO 8601 week date
+      // Find the nearest Thursday: needed to determine the first week
+      var thursday = date.subtract(Duration(days: (date.weekday + 5) % 7 - 3));
+
+      // January 4th is always in week 1
+      var firstThursday = DateTime(thursday.year, 1, 4);
+
+      // Week number is the number of weeks between the first Thursday and this Thursday
+      var weekNumber = ((thursday.difference(firstThursday).inDays / 7).ceil() + 1);
+
+      return weekNumber.toString();
     } else if (scale == BezierChartScale.monthly) {
       final dateFormat = intl.DateFormat('MMM');
       final dateFormatYear = intl.DateFormat('y');
