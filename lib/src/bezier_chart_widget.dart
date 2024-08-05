@@ -402,7 +402,7 @@ class BezierChartState extends State<BezierChart>
         return _xAxisDataPoints.length * (horizontalSpacing * _currentScale) -
             horizontalPadding / 2;
       } else if (scale == BezierChartScale.weeklyPeriod) {
-        horizontalSpacing = constraints.maxWidth / 53;
+        horizontalSpacing = constraints.maxWidth / 12;
         return _xAxisDataPoints.length * (horizontalSpacing * _currentScale) -
             horizontalPadding / 2;
       } else if (scale == BezierChartScale.monthly) {
